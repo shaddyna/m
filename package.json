@@ -15,6 +15,7 @@
     "framer-motion": "^12.5.0",
     "gsap": "^3.12.7",
     "ionicons": "^7.4.0",
+    "jsonwebtoken": "^9.0.3",
     "lucide-react": "^0.484.0",
     "mongoose": "^9.1.5",
     "next": "15.1.2",
