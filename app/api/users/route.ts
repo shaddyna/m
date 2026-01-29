@@ -1,7 +1,8 @@
 // app/api/users/route.ts
 import { NextResponse } from 'next/server';
-import dbConnect from '../dbConnect';
+
 import User from '@/models/User';
+import dbConnect from '@/lib/dbConnect';
 
 export async function GET() {
   try {
