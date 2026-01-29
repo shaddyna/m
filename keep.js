@@ -1,21 +1,33 @@
 /*{
-  "name": "malex",
+  "name": "malex-fullstack",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "concurrently \"node web-backend/server.js\" \"node backend/server.js\" \"next dev --turbopack\"",
+    "start": "concurrently \"node web-backend/server.js\" \"node backend/server.js\" \"next start\"",
     "build": "next build",
-    "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
     "@reacticons/ionicons": "^7.1.0",
     "@tailwindcss/forms": "^0.5.10",
+    "bcryptjs": "^3.0.2",
+    "body-parser": "^1.20.2",
     "chart.js": "^4.4.7",
+    "cloudinary": "^2.9.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "express-async-handler": "^1.2.0",
+    "express-validator": "^7.2.1",
     "framer-motion": "^12.5.0",
     "gsap": "^3.12.7",
     "ionicons": "^7.4.0",
+    "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.484.0",
+    "luxon": "^3.7.2",
+    "mongoose": "^8.14.2",
+    "multer": "^1.4.5-lts.2",
     "next": "15.1.2",
     "phosphor-react": "^1.4.1",
     "react": "^19.0.0",
@@ -29,6 +41,7 @@
     "react-slick": "^0.30.3",
     "slick-carousel": "^1.8.1",
     "swiper": "^11.1.15",
+    "uuid": "^13.0.0",
     "zustand": "^5.0.4"
   },
   "devDependencies": {
@@ -36,10 +49,12 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "concurrently": "^9.2.1",
     "eslint": "^9",
     "eslint-config-next": "15.1.2",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
   }
-}*/
+}
+*/
