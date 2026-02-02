@@ -1,7 +1,7 @@
 // lib/timeRecord/timeRecordService.ts
-import TimeRecord, { ITimeRecord } from '@/models/TimeRecord';
-import User, { IUser } from '@/models/User';
 import { cloudinary } from '@/lib/cloudinay';
+import { TimeRecord } from '@/models/TimeRecord';
+import User from '@/models/User';
 
 const EXPECTED_SCHEDULE = {
   'check-in': '08:30',
