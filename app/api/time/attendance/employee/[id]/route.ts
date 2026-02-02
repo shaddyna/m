@@ -29,12 +29,12 @@ function minutesToHours(minutes: number): string {
 
 export async function GET(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
     await dbConnect();
 
-    const { id: employeeId } = context.params;
+    const { id: employeeId } = params;
     const searchParams = request.nextUrl.searchParams;
 
     const period =
@@ -127,7 +127,7 @@ export async function GET(
 
     const records = await TimeRecord.find({
       employee: employeeId,
-      date: { $gte: startDate },
+      workDate: { $gte: startDate }, // Fixed: changed 'date' to 'workDate'
     }).lean();
 
     const daysMap = new Map<string, any>();
