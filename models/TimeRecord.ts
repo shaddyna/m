@@ -1,85 +1,73 @@
-import mongoose, { Schema, Document, Model, Types } from "mongoose";
+import mongoose, { Schema, Document, Model } from 'mongoose';
 
-/**
- * 1️⃣ Document interface
- */
 export interface ITimeRecord extends Document {
-  employee: Types.ObjectId;
+  employee: mongoose.Types.ObjectId;
+  employeeName: string;
+  employeeEmail: string;
+  employeeRole: string;
+  workDate: string; // YYYY-MM-DD format
   date: Date;
-  sessionType: "check-in" | "lunch-out" | "lunch-in" | "check-out";
-  recordedTime: string; // "HH:MM"
-  actualTime: string;   // "HH:MM"
-  status: "on-time" | "late" | "early" | "overtime";
-  imageUrl: string;
-  notes: string;
+  sessionType: 'check-in' | 'lunch-out' | 'lunch-in' | 'check-out';
+  recordedTime: string;
+  actualTime: string;
+  status: 'on-time' | 'late' | 'early' | 'overtime';
+  imageUrl?: string;
+  notes?: string;
   department: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-/**
- * 2️⃣ Schema
- */
-const timeRecordSchema = new Schema<ITimeRecord>(
-  {
-    employee: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-    date: {
-      type: Date,
-      required: true,
-      default: Date.now,
-    },
-    sessionType: {
-      type: String,
-      required: true,
-      enum: ["check-in", "lunch-out", "lunch-in", "check-out"],
-    },
-    recordedTime: {
-      type: String, // "HH:MM"
-      required: true,
-    },
-    actualTime: {
-      type: String, // "HH:MM"
-      required: true,
-    },
-    status: {
-      type: String,
-      required: true,
-      enum: ["on-time", "late", "early", "overtime"],
-    },
-    imageUrl: {
-      type: String,
-      required: true,
-    },
-    notes: {
-      type: String,
-      default: "",
-    },
-    department: {
-      type: String,
-      default: "General",
-    },
+const timeRecordSchema = new Schema<ITimeRecord>({
+  employee: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
   },
-  {
-    timestamps: true,
+  employeeName: {
+    type: String,
+    required: true
+  },
+  employeeEmail: {
+    type: String,
+    required: true
+  },
+  employeeRole: {
+    type: String,
+    default: 'facilitator'
+  },
+  workDate: {
+    type: String, // "YYYY-MM-DD"
+    required: true,
+    index: true
+  },
+  date: {
+    type: Date,
+    required: true,
+    default: Date.now
+  },
+  sessionType: {
+    type: String,
+    required: true,
+    enum: ['check-in', 'lunch-out', 'lunch-in', 'check-out']
+  },
+  recordedTime: String,
+  actualTime: String,
+  status: String,
+  imageUrl: String,
+  notes: String,
+  department: {
+    type: String,
+    default: 'General'
   }
-);
+}, { timestamps: true });
 
-/**
- * 3️⃣ Indexes (unchanged)
- */
-timeRecordSchema.index({ employee: 1, date: 1, sessionType: 1 });
-timeRecordSchema.index({ date: 1 });
+// Indexes for efficient queries
+timeRecordSchema.index({ employee: 1, workDate: 1, sessionType: 1 });
+timeRecordSchema.index({ workDate: 1 });
 timeRecordSchema.index({ department: 1 });
+timeRecordSchema.index({ employee: 1, workDate: -1 });
+timeRecordSchema.index({ status: 1, workDate: 1 });
 
-/**
- * 4️⃣ Next.js-safe model export
- */
-const TimeRecord: Model<ITimeRecord> =
-  mongoose.models.TimeRecord ||
-  mongoose.model<ITimeRecord>("TimeRecord", timeRecordSchema);
-
-export default TimeRecord;
+export const TimeRecord = mongoose.models.TimeRecord || 
+  mongoose.model<ITimeRecord>('TimeRecord', timeRecordSchema);

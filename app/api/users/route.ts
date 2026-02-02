@@ -16,9 +16,9 @@ export async function GET() {
 
 import { NextResponse } from 'next/server';
 import { withCors, handleCorsPreflight } from '@/lib/cors';  // Add imports
-import User from '@/models/User';
 import dbConnect from '@/lib/dbConnect';
 import { NextRequest } from 'next/server';
+import { User } from '@/models/User';
 
 export async function GET(request: NextRequest) {
   return withCors(request, async () => {
