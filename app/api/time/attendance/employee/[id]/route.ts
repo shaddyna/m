@@ -27,16 +27,24 @@ function minutesToHours(minutes: number): string {
 
 /* ----------------------------- GET Handler ----------------------------- */
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest) {
   try {
     await dbConnect();
-
-    const { id: employeeId } = params;
+    
+    // Extract ID from URL
+    const url = new URL(request.url);
+    const pathParts = url.pathname.split('/');
+    const employeeId = pathParts[pathParts.length - 1];
+    
+    if (!employeeId || employeeId === '[id]') {
+      return NextResponse.json(
+        { success: false, error: 'Employee ID is required' },
+        { status: 400 }
+      );
+    }
+    
     const searchParams = request.nextUrl.searchParams;
-
+    
     const period =
       (searchParams.get('period') as 'week' | 'month' | 'year') ?? 'month';
     const date = searchParams.get('date');
@@ -127,7 +135,7 @@ export async function GET(
 
     const records = await TimeRecord.find({
       employee: employeeId,
-      workDate: { $gte: startDate }, // Fixed: changed 'date' to 'workDate'
+      workDate: { $gte: startDate.toISOString() },
     }).lean();
 
     const daysMap = new Map<string, any>();
