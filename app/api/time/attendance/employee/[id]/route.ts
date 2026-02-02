@@ -28,7 +28,8 @@ export async function GET(
   try {
     await dbConnect();
     
-    const employeeId = params.id;
+    //const employeeId = params.id;
+     const { id: employeeId } = await params; 
     const searchParams = request.nextUrl.searchParams;
     const period = searchParams.get('period') as 'week' | 'month' | 'year' || 'month';
     const date = searchParams.get('date');
