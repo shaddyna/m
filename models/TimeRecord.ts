@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document, Model } from 'mongoose';
+import mongoose, { Document, Model, Schema } from 'mongoose';
 
 export interface ITimeRecord extends Document {
   employee: mongoose.Types.ObjectId;
@@ -8,8 +8,8 @@ export interface ITimeRecord extends Document {
   workDate: string; // YYYY-MM-DD format
   date: Date;
   sessionType: 'check-in' | 'lunch-out' | 'lunch-in' | 'check-out';
-  recordedTime: string;
-  actualTime: string;
+  recordedTime: string; // HH:mm
+  actualTime: string; // HH:mm
   status: 'on-time' | 'late' | 'early' | 'overtime';
   imageUrl?: string;
   notes?: string;
@@ -34,7 +34,7 @@ const timeRecordSchema = new Schema<ITimeRecord>({
   },
   employeeRole: {
     type: String,
-    default: 'facilitator'
+    required: true
   },
   workDate: {
     type: String, // "YYYY-MM-DD"
@@ -67,7 +67,6 @@ timeRecordSchema.index({ employee: 1, workDate: 1, sessionType: 1 });
 timeRecordSchema.index({ workDate: 1 });
 timeRecordSchema.index({ department: 1 });
 timeRecordSchema.index({ employee: 1, workDate: -1 });
-timeRecordSchema.index({ status: 1, workDate: 1 });
 
-export const TimeRecord = mongoose.models.TimeRecord || 
+export const TimeRecord: Model<ITimeRecord> = mongoose.models.TimeRecord || 
   mongoose.model<ITimeRecord>('TimeRecord', timeRecordSchema);

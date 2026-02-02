@@ -1,5 +1,6 @@
-import { TimeRecord } from '@/models/TimeRecord';
-import  User from '@/models/User';
+/*import { TimeRecord } from '@/models/TimeRecord';
+import User from '@/models/User';
+
 
 
 import { Types } from 'mongoose';
@@ -139,7 +140,7 @@ export class AttendanceService {
     allEmployees.forEach((emp: 
         {
         _id: Types.ObjectId;
-         //_id: { toString: () => string; };
+    _id: { toString: () => string; };
          name: any; email: any; department: any; role: any; }) => {
       attendanceMap.set(emp._id.toString(), {
         employeeId: emp._id,
@@ -451,4 +452,4 @@ export class AttendanceService {
     const mins = minutes % 60;
     return `${hours}h ${mins.toString().padStart(2, '0')}m`;
   }
-}
+}*/
