@@ -1,91 +1,72 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { TimeRecord } from '@/models/TimeRecord';
-import { User } from '@/models/User';
-import { AttendanceService } from '@/services/attendance.service';
-
-import { cloudinary } from '@/lib/cloudinay';
 import dbConnect from '@/lib/dbConnect';
 
-
-export async function POST(request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
     await dbConnect();
     
-    const body = await request.json();
-    const { employeeId, sessionType, actualTime, notes, imageData } = body;
+    const searchParams = request.nextUrl.searchParams;
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '50');
+    const employeeId = searchParams.get('employee');
+    const sessionType = searchParams.get('session');
+    const date = searchParams.get('date');
     
-    if (!employeeId || !sessionType || !actualTime) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      );
+    const skip = (page - 1) * limit;
+    
+    // Build filter
+    const filter: any = {};
+    
+    if (employeeId && employeeId !== 'all') {
+      filter.employee = employeeId;
     }
     
-    const employee = await User.findById(employeeId);
-    if (!employee) {
-      return NextResponse.json(
-        { error: 'Employee not found' },
-        { status: 404 }
-      );
+    if (sessionType && sessionType !== 'all') {
+      filter.sessionType = sessionType;
     }
     
-    const recordDate = new Date();
-    const workDate = recordDate.toISOString().split('T')[0];
-    
-    // Validate session
-    const day = recordDate.getDay();
-    if (day === 0) {
-      return NextResponse.json(
-        { error: 'Sunday is not a working day' },
-        { status: 400 }
-      );
+    if (date) {
+      const searchDate = new Date(date);
+      searchDate.setHours(0, 0, 0, 0);
+      const nextDay = new Date(searchDate);
+      nextDay.setDate(nextDay.getDate() + 1);
+      
+      filter.date = {
+        $gte: searchDate,
+        $lt: nextDay
+      };
     }
     
-    const isSaturday = day === 6;
-    if (isSaturday && (sessionType === 'lunch-out' || sessionType === 'lunch-in')) {
-      return NextResponse.json(
-        { error: `${sessionType} is not allowed on Saturday` },
-        { status: 400 }
-      );
-    }
+    // Get records with pagination
+    const records = await TimeRecord.find(filter)
+      .populate('employee', 'name email department role')
+      .sort({ date: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean();
     
-    // Calculate status
-    const status = AttendanceService.calculateStatus(sessionType, actualTime, recordDate);
+    // Get total count
+    const total = await TimeRecord.countDocuments(filter);
+    const totalPages = Math.ceil(total / limit);
     
-    // Upload image if provided
-    let imageUrl;
-    if (imageData) {
-      const uploadResponse = await cloudinary.uploader.upload(imageData, {
-        upload_preset: process.env.CLOUDINARY_UPLOAD_PRESET,
-        folder: 'time-management'
-      });
-      imageUrl = uploadResponse.secure_url;
-    }
-    
-    // Create time record
-    const timeRecord = await TimeRecord.create({
-      employee: employee._id,
-      employeeName: employee.name,
-      employeeEmail: employee.email,
-      employeeRole: employee.role,
-      workDate,
-      date: recordDate,
-      sessionType,
-      recordedTime: recordDate.toTimeString().slice(0, 5),
-      actualTime,
-      status,
-      imageUrl,
-      notes,
-      department: employee.department || 'General'
+    return NextResponse.json({
+      success: true,
+      records,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages,
+        hasNext: page < totalPages,
+        hasPrev: page > 1
+      }
     });
     
-    return NextResponse.json(
-      { timeRecord, message: 'Time record created successfully' },
-      { status: 201 }
-    );
   } catch (error: any) {
+    console.error('Error fetching records:', error);
     return NextResponse.json(
-      { error: error.message },
+      { success: false, error: error.message },
       { status: 500 }
     );
   }
