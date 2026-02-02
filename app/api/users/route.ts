@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { TimeRecord } from '@/models/TimeRecord';
-import { User } from '@/models/User';
+import  User  from '@/models/User';
 import dbConnect from '@/lib/dbConnect';
 
 interface DailySession {
@@ -91,7 +91,7 @@ export async function GET(request: NextRequest) {
     const attendanceMap = new Map<string, DailyAttendance>();
     
     // Initialize all employees as absent
-    employees.forEach(emp => {
+    employees.forEach((emp: { _id: { toString: () => string; }; name: any; email: any; department: any; role: any; }) => {
       attendanceMap.set(emp._id.toString(), {
         employeeId: emp._id.toString(),
         name: emp.name,

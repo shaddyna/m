@@ -1,5 +1,5 @@
 import { TimeRecord } from '@/models/TimeRecord';
-import { User } from '@/models/User';
+import  User from '@/models/User';
 
 
 import { Types } from 'mongoose';

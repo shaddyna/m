@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { TimeRecord } from '@/models/TimeRecord';
-import { User } from '@/models/User';
+import  User  from '@/models/User';
 import dbConnect from '@/lib/dbConnect';
 
 export async function GET(request: NextRequest) {
