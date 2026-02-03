@@ -52,7 +52,7 @@ export interface CreateTimeRecordData {
   imageData?: string;
 }
 
-export async function createTimeRecord(data: CreateTimeRecordData) {
+/*export async function createTimeRecord(data: CreateTimeRecordData) {
   const { employeeId, sessionType, actualTime, notes, imageData } = data;
   
   const employee = await User.findById(employeeId);
@@ -79,7 +79,46 @@ export async function createTimeRecord(data: CreateTimeRecordData) {
   });
   
   return timeRecord;
+}*/
+
+export async function createTimeRecord(data: CreateTimeRecordData) {
+  const { employeeId, sessionType, actualTime, notes, imageData } = data;
+  
+  // 1️⃣ Find employee
+  const employee = await User.findById(employeeId);
+  if (!employee) throw new Error('Employee not found');
+
+  // 2️⃣ Upload image if provided
+  let imageUrl: string | undefined;
+  if (imageData) {
+    imageUrl = await uploadImage(imageData);
+  }
+
+  // 3️⃣ Calculate status
+  const status = calculateStatus(sessionType, actualTime);
+
+  // 4️⃣ Build workDate
+  const workDate = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+
+  // 5️⃣ Create record with all required fields
+  const timeRecord = await TimeRecord.create({
+    employee: employee._id,
+    employeeName: employee.name,
+    employeeEmail: employee.email,
+    employeeRole: employee.role,
+    workDate,
+    sessionType,
+    recordedTime: new Date().toTimeString().slice(0, 5),
+    actualTime,
+    status,
+    department: employee.department || 'General',
+    notes: notes || '',
+    imageUrl
+  });
+
+  return timeRecord;
 }
+
 
 export interface GetTimeRecordsParams {
   date?: string;
