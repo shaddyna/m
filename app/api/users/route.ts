@@ -2,7 +2,7 @@
 import dbConnect from '@/lib/dbConnect';
 import User from '@/models/User';
 import { NextRequest, NextResponse } from 'next/server';
-import { withCors } from '@/lib/cors';
+import { handleCorsPreflight, withCors } from '@/lib/cors';
 
 export async function GET(request: NextRequest) {
   return withCors(request, async () => {
@@ -14,4 +14,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
   });
+}
+
+export async function OPTIONS(request: NextRequest) {
+  return handleCorsPreflight(request);
 }
