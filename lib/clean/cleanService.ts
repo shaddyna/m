@@ -185,6 +185,7 @@ export interface FilteredRecordsResult {
         endDate: string;
         dateLabel?: string;  // Add optional property
         date?: string;       // Add optional property
+        year?: number;
     };
 }
 
