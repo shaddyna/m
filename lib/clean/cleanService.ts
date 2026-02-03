@@ -183,9 +183,11 @@ export interface FilteredRecordsResult {
         endTimestamp: number;
         startDate: string;
         endDate: string;
-        dateLabel?: string;  // Add optional property
-        date?: string;       // Add optional property
+        dateLabel?: string;  
+        date?: string;       
         year?: number;
+        startDateHuman?: string; 
+        endDateHuman?: string; 
     };
 }
 
