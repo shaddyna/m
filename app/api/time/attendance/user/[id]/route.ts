@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+/*import { NextRequest, NextResponse } from 'next/server';
 
 import { withCors } from '@/lib/cors';
 import { TimeRecord } from '@/models/TimeRecord';
@@ -178,4 +178,4 @@ export async function GET(
       );
     }
   });
-}
+}*/
