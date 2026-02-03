@@ -11,6 +11,7 @@
   "dependencies": {
     "@reacticons/ionicons": "^7.1.0",
     "@tailwindcss/forms": "^0.5.10",
+    "bcryptjs": "^3.0.3",
     "chart.js": "^4.4.7",
     "cloudinary": "^2.9.0",
     "framer-motion": "^12.5.0",

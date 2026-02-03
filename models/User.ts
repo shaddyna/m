@@ -9,6 +9,7 @@ export interface IUser extends Document {
   email: string;
   password: string;
   role: "admin" | "storeManager" | "facilitator" | "sales" | "accounts";
+  department?: string; 
   tokens: { token: string }[];
   generateAuthToken(): Promise<string>;
 }
