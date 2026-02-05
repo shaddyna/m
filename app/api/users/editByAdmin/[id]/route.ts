@@ -1,11 +1,11 @@
-import dbConnect from '@/lib/dbConnect';
+/*import dbConnect from '@/lib/dbConnect';
 import User from '@/models/User';
 import { NextRequest, NextResponse } from 'next/server';
 import { handleCorsPreflight, withCors } from '@/lib/cors';
 import { normalizeRole } from '@/utils/role';
 
 // PUT /api/users/editByAdmin/:id
-/*export async function PUT(
+export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
@@ -63,12 +63,24 @@ export async function OPTIONS(request: NextRequest) {
   return handleCorsPreflight(request);
 }*/
 
-export async function PUT(request: NextRequest, context: { params: Record<string, string> }) {
+import dbConnect from '@/lib/dbConnect';
+import User from '@/models/User';
+import { NextRequest, NextResponse } from 'next/server';
+import { handleCorsPreflight, withCors } from '@/lib/cors';
+import { normalizeRole } from '@/utils/role';
+
+// PUT /api/users/editByAdmin/:id
+// ✅ Fixed: params is now Promise<{ id: string }>
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   return withCors(request, async () => {
     try {
       await dbConnect();
 
-      const { id } = context.params; // extract id here
+      // ✅ Must await params before destructuring
+      const { id } = await params;
       const body = await request.json();
 
       const allowedFields = ['name', 'email', 'role', 'password'];
@@ -113,6 +125,7 @@ export async function PUT(request: NextRequest, context: { params: Record<string
     }
   });
 }
+
 export async function OPTIONS(request: NextRequest) {
   return handleCorsPreflight(request);
 }
